@@ -6,6 +6,9 @@ const pool = new Client({
   port: 5432, // mysql port
   password: process.env.DB_PASSWORD, // mysql password
   database: process.env.DB_DATABASE, // mysql 데이터베이스
+  ssl: {
+    rejectUnauthorized: false,
+  },
 });
 
 export const db = pool;
