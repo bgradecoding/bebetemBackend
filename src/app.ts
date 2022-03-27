@@ -14,7 +14,7 @@ app.use((error: any, req: Request, res: Response) => {
   res.sendStatus(500);
 });
 
-app.listen(process.env.PORT || 5000, () => {
+app.listen(process.env.PORT, () => {
   console.log("**----------------------------------**");
   console.log("====      Server is On...!!!      ====");
   console.log("**----------------------------------**");

@@ -17,8 +17,8 @@ export async function createTodo(req: Request, res: Response) {
 
 export async function updateTodo(req: Request, res: Response) {
   const todo: Todo = req.body;
-  const updatedTodo: Todo = await todoData.updateTodo(todo);
-  res.status(200).json(updatedTodo);
+  const updatedNum: number = await todoData.updateTodo(todo);
+  res.status(200).json({ message: `${updatedNum}건 update` });
 }
 
 export async function deleteTodo(req: Request, res: Response) {

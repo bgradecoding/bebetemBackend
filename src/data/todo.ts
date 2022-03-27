@@ -2,33 +2,29 @@ import { db } from "./database";
 import { Todo } from "../models/todo";
 
 export async function getTodo(email: string): Promise<Todo[]> {
-  const query: string = "SELECT * FROM TB_TODO where email = ?";
+  const query: string = `SELECT * FROM TB_TODO where email = '${email}';`;
   db.connect();
-  return db.query(query, [email]).then((result: any) => result[0]);
+  return db.query(query).then((result: any) => result.rows);
 }
 
 export async function createTodo(todo: Todo): Promise<Todo> {
   db.connect();
-  const query: string =
-    "INSERT INTO TB_TODO(email, todoname, todostatus, todoDate) VALUES(?, ?, ?, NOW())";
-  return db
-    .query(query, [todo.email, todo.todoname, todo.todostatus])
-    .then((result: any) => result[0]);
+  const query: string = `INSERT INTO TB_TODO(email, todoname, todostatus, todoDate) VALUES('${
+    todo.email
+  }', '${todo.todoname}', '${
+    todo.todostatus
+  }', '${new Date().toISOString()}');`;
+  return db.query(query).then((result: any) => result.rows[0]);
 }
 
-export async function updateTodo(todo: Todo): Promise<Todo> {
-  const query: string =
-    "UPDATE TB_TODO SET todostatus = ? WHERE email = ? AND id = ?";
+export async function updateTodo(todo: Todo): Promise<number> {
+  const query: string = `UPDATE TB_TODO SET todostatus = '${todo.todostatus}' WHERE email = '${todo.email}' AND id = ${todo.id};`;
   db.connect();
-  return db
-    .query(query, [todo.todostatus, todo.email, todo.id])
-    .then((result: any) => result[0]);
+  return db.query(query).then((result: any) => result.rowCount);
 }
 
 export async function deleteTodo(todo: Todo): Promise<void> {
-  const query: string = "DELETE FROM TB_TODO WHERE email = ? AND id = ?";
+  const query: string = `DELETE FROM TB_TODO WHERE email = '${todo.email}' AND id = '${todo.id}';`;
   db.connect();
-  return db
-    .query(query, [todo.email, todo.id])
-    .then((result: any) => result[0]);
+  return db.query(query).then((result: any) => result.rowCount);
 }
