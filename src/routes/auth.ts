@@ -21,4 +21,6 @@ router.delete("/logout", authController.logout);
 
 router.post("/login", validateCredential, authController.login);
 
+router.post("/user", authController.createUser);
+
 export default router;
