@@ -58,7 +58,7 @@ export async function createUser(req: Request, res: Response) {
   const { email, password, nickname } = req.body;
   const hashedPassword = bcrypt.hashSync(
     password,
-    process.env.BCRYPT_SALT_ROUNDS!
+    parseInt(process.env.BCRYPT_SALT_ROUNDS!)
   );
 
   const userEmail: string = email;
