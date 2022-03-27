@@ -54,17 +54,26 @@ export function tokenValidator(req: Request, res: Response) {
   });
 }
 
-export function createUser(req: Request, res: Response) {
+export async function createUser(req: Request, res: Response) {
   const { email, password, nickname } = req.body;
   const hashedPassword = bcrypt.hashSync(
     password,
     process.env.BCRYPT_SALT_ROUNDS!
   );
+
+  const userEmail: string = email;
+
+  const resultEmail = await authData.checkDupEmail(userEmail);
+
+  if (resultEmail) {
+    return res.status(409).json({ message: "Email already exists" });
+  }
+
   const user: Login = {
     email,
     password: hashedPassword,
     nickname,
   };
-  authData.createUser(user);
+  await authData.createUser(user);
   res.sendStatus(200);
 }

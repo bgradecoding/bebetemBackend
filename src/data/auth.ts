@@ -14,3 +14,8 @@ export async function createUser(user: Login): Promise<void> {
     .execute(query, [user.email, user.password, user.nickname])
     .then((result: any) => result[0]);
 }
+
+export async function checkDupEmail(email: string): Promise<Login> {
+  const query: string = "SELECT email FROM TB_USER WHERE email = ?";
+  return db.execute(query, [email]).then((result: any) => result[0][0]);
+}

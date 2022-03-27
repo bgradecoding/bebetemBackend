@@ -1,9 +1,11 @@
 import { Request, Response } from "express";
 import { Todo } from "../models/todo";
 import * as todoData from "../data/todo";
+import * as util from "../util/util";
 
 export async function getTodo(req: Request, res: Response) {
-  const todoList: Todo[] = await todoData.getTodo();
+  const email: string = util.getUserEmailFormToken(req);
+  const todoList: Todo[] = await todoData.getTodo(email);
   res.status(200).json(todoList);
 }
 

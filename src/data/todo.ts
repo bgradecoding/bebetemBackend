@@ -1,9 +1,9 @@
 import { db } from "./database";
 import { Todo } from "../models/todo";
 
-export async function getTodo(): Promise<Todo[]> {
+export async function getTodo(email: string): Promise<Todo[]> {
   const query: string = "SELECT * FROM TB_TODO where email = ?";
-  return db.execute(query, []).then((result: any) => result[0]);
+  return db.execute(query, [email]).then((result: any) => result[0]);
 }
 
 export async function createTodo(todo: Todo): Promise<Todo> {
@@ -16,15 +16,15 @@ export async function createTodo(todo: Todo): Promise<Todo> {
 
 export async function updateTodo(todo: Todo): Promise<Todo> {
   const query: string =
-    "UPDATE TB_TODO SET todoname = ?, todostatus = ?, todoDate = NOW() WHERE email = ?";
+    "UPDATE TB_TODO SET todostatus = ? WHERE email = ? AND id = ?";
   return db
-    .execute(query, [todo.todoname, todo.todostatus, todo.email])
+    .execute(query, [todo.todostatus, todo.email, todo.id])
     .then((result: any) => result[0]);
 }
 
 export async function deleteTodo(todo: Todo): Promise<void> {
-  const query: string = "DELETE FROM TB_TODO WHERE email = ? AND todoname = ?";
+  const query: string = "DELETE FROM TB_TODO WHERE email = ? AND id = ?";
   return db
-    .execute(query, [todo.email, todo.todoname])
+    .execute(query, [todo.email, todo.id])
     .then((result: any) => result[0]);
 }
