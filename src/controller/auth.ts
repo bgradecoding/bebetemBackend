@@ -74,6 +74,15 @@ export async function createUser(req: Request, res: Response) {
     password: hashedPassword,
     nickname,
   };
-  await authData.createUser(user);
-  res.sendStatus(200);
+  const createCount: number = await authData.createUser(user);
+  if (createCount === 1) {
+    const jwtTokenObject: Partial<Login> = {
+      email: email,
+    };
+    const accesToken = util.generateToken(jwtTokenObject);
+    const refreshToken = jwt.sign(jwtTokenObject, REFRESH_TOKEN_SECRET);
+    res.status(201).json({ ...user, password: "", accesToken, refreshToken });
+  } else {
+    res.sendStatus(500);
+  }
 }

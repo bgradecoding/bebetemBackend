@@ -27,7 +27,7 @@ paths:
         required: true
       responses:
         "200":
-          description: Success
+          description: Succeeded
           content:
             application/json:
               schema:
@@ -38,29 +38,142 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorApiResponse"
+  /user:
+    post:
+      tags:
+        - auth
+      summary: Create User in To-do Service
+      description: Create a user account for the given user details
+      operationId: createUser
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/NewUserInfo"
+        required: true
+      responses:
+        "201":
+          description: Succeeded
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CUDResponse"
+        "409":
+          description: User Exist
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorApiResponse"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorApiResponse"
 
   /todo:
     get:
       tags:
-        - tweets
-      summary: Get all tweets optionally filtered by author
+        - todo
+      summary: Get all todos optionally filtered by email
       description: >
-        Fetches a list of tweets. If username is provided, the list contains
-        only tweets by the given user.
-      operationId: getTweets
+        Fetches a list of todos. If email is provided, the list contains
+        only todo by the given user.
+      operationId: getTodo
       parameters:
-        - name: username
-          in: query
-          description: Username value to filter the results
-          schema:
-            type: string
+        - name: header token
+          description: token을 이용하여 email 정보 확인
       responses:
         "200":
           description: Succeeded
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/TweetsApiResponse"
+                $ref: "#/components/schemas/TodoApiResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorApiResponse"
+      security:
+        - jwt_auth: []
+
+    post:
+      tags:
+        - todo
+      summary: Get all todos optionally filtered by email
+      description: >
+        Fetches a list of todos. If email is provided, the list contains
+        only todo by the given user.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/NewTodoInfo"
+        required: true
+      responses:
+        "200":
+          description: Succeeded
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CUDResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorApiResponse"
+      security:
+        - jwt_auth: []
+
+    put:
+      tags:
+        - todo
+      summary: Update todo's status filtered by email and id
+      description: >
+        로그인한 사용자의 투두리스트 중 하나의 상태를 바꾸는 API
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateTodoInfo"
+        required: true
+      responses:
+        "200":
+          description: Succeeded
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CUDResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorApiResponse"
+      security:
+        - jwt_auth: []
+    delete:
+      tags:
+        - todo
+      summary: delete todo filtered by email and id
+      description: >
+        로그인한 사용자의 투두리스트 중 하나를 삭제하는 API
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DeleteTodoInfo"
+        required: true
+      responses:
+        "200":
+          description: Succeeded
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CUDResponse"
         "401":
           description: Unauthorized
           content:
@@ -72,6 +185,58 @@ paths:
 
 components:
   schemas:
+    DeleteTodoInfo:
+      type: object
+      title: delete todo
+      properties:
+        email:
+          type: string
+        id:
+          type: number
+    UpdateTodoInfo:
+      type: object
+      title: update todo
+      properties:
+        email:
+          type: string
+        id:
+          type: number
+        todostatus:
+          type: string
+    NewTodoInfo:
+      type: object
+      title: new todo
+      properties:
+        email:
+          type: string
+        todoname:
+          type: string
+        todostatus:
+          type: string
+    TodoApiResponse:
+      type: array
+      items:
+        $ref: "#/components/schemas/Todo"
+    Todo:
+      type: object
+      title: todo
+      properties:
+        id:
+          type: number
+        email:
+          type: string
+        todoname:
+          type: string
+        todostatus:
+          type: string
+        tododate:
+          type: string
+    CUDResponse:
+      type: object
+      title: CUD Success Message
+      properties:
+        message:
+          type: string
     UserLoginInfo:
       type: object
       title: User Login Info
@@ -94,88 +259,25 @@ components:
           type: string
         refreshToken:
           type: string
-    UserRegistration:
+    NewUserInfo:
       type: object
       title: User registration details
       properties:
-        username:
+        email:
           type: string
         password:
           type: string
           minLength: 5
-        name:
+        nickname:
           type: string
-        email:
-          type: string
-          format: email
-        url:
-          type: string
-          format: url
       required:
         - username
         - password
-        - email
-        - name
+        - nickname
       example:
-        username: johndoe
-        password: password
-        name: John Doe
-        email: john.doe@gmail.com
-        url: "https://awesomepics.com/878y766"
-    Tweet:
-      type: object
-      properties:
-        id:
-          type: integer
-          format: int64
-        text:
-          type: string
-          minLength: 3
-        createdAt:
-          type: string
-          format: date-time
-          description: Creation date
-          example: "2021-01-30T08:30:20.000Z"
-        username:
-          type: string
-        name:
-          type: string
-        userId:
-          type: integer
-          format: int64
-        url:
-          type: string
-          format: url
-          nullable: true
-      required:
-        - id
-        - text
-        - createdAt
-        - username
-        - name
-        - userId
-        - url
-      example:
-        id: 42
-        text: Best tweet ever
-        createdAt: "2021-01-30T08:30:20.000Z"
-        userId: 1
-        name: John Doe
-        username: johndoe
-        url: null
-    AuthApiResponse:
-      type: object
-      properties:
-        token:
-          type: string
-        username:
-          type: string
-      required:
-        - token
-        - username
-      example:
-        token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
-        username: johndoe
+        email: admin@admin.com
+        password: admin
+        nickname: admin
     ErrorApiResponse:
       type: object
       properties:
@@ -185,10 +287,6 @@ components:
         - message
       example:
         message: "Something went wrong 🤪"
-    TweetsApiResponse:
-      type: array
-      items:
-        $ref: "#/components/schemas/Tweet"
   securitySchemes:
     jwt_auth:
       description: Bearer token authorization with JWT

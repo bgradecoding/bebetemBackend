@@ -6,11 +6,11 @@ export async function login(email: string): Promise<Login> {
   return db.query(query).then((result: any) => result.rows[0]);
 }
 
-export async function createUser(user: Login): Promise<void> {
+export async function createUser(user: Login): Promise<number> {
   const query: string = `INSERT INTO TB_USER(email, password, nickname, created) VALUES('${
     user.email
   }', '${user.password}', '${user.nickname}', '${new Date().toISOString()}');`;
-  return db.query(query, (err: any, res: any) => {});
+  return db.query(query).then((result: any) => result.rowCount);
 }
 
 export async function checkDupEmail(email: string): Promise<Login> {

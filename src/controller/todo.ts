@@ -11,8 +11,8 @@ export async function getTodo(req: Request, res: Response) {
 
 export async function createTodo(req: Request, res: Response) {
   const newTodo: Todo = req.body;
-  const todo: Todo = await todoData.createTodo(newTodo);
-  res.status(200).json(todo);
+  const todo: number = await todoData.createTodo(newTodo);
+  res.status(200).json({ message: `${todo}건 create` });
 }
 
 export async function updateTodo(req: Request, res: Response) {
@@ -24,5 +24,5 @@ export async function updateTodo(req: Request, res: Response) {
 export async function deleteTodo(req: Request, res: Response) {
   const todo: Todo = req.body;
   await todoData.deleteTodo(todo);
-  res.sendStatus(204);
+  res.status(204).json({ message: `삭제 완료` });
 }
