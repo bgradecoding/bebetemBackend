@@ -71,7 +71,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorApiResponse"
 
-  /todo:
+  /todo/todo:
     get:
       tags:
         - todo

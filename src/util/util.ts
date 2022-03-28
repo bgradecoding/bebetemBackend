@@ -21,7 +21,7 @@ export function authenticateToken(
 }
 
 export function generateToken(user: any) {
-  return jwt.sign(user, ACCESS_TOKEN_SECRET, { expiresIn: "15m" });
+  return jwt.sign(user, ACCESS_TOKEN_SECRET, { expiresIn: "40m" });
 }
 
 export function getUserEmailFormToken(req: Request) {
