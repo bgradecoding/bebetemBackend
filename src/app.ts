@@ -1,10 +1,23 @@
 import express, { Request, Response } from "express";
 import authRouter from "./routes/auth";
 import todoRouter from "./routes/todo";
+import swaggerUi from "swagger-ui-express";
+import yaml from "yamljs";
+import cors from "cors";
 
 const app = express();
+
+const openAPIDocument = yaml.load("./src/api/swagger.yaml");
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+app.use(
+  cors({
+    origin: "https://todo-pre.herokuapp.com",
+    credentials: true,
+  })
+);
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(openAPIDocument));
 
 app.use("/", authRouter);
 app.use("/todo", todoRouter);
