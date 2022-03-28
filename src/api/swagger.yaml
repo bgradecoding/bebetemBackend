@@ -168,7 +168,7 @@ paths:
               $ref: "#/components/schemas/DeleteTodoInfo"
         required: true
       responses:
-        "200":
+        "204":
           description: Succeeded
           content:
             application/json:
